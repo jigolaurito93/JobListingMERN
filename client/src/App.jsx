@@ -12,6 +12,7 @@ import {
   Landing,
   Profile,
   Stats,
+  Login,
 } from "./pages";
 
 const router = createBrowserRouter([
