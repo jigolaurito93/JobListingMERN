@@ -19,12 +19,15 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <HomeLayout />,
+    // If path doesnt exist, use errorElement instead
+    errorElement: <Error />,
+    // 
     children: [
       {
         // This make it the main route
         index: true,
         element: <Landing />,
-        // 
+        //
       },
       {
         path: "register",
