@@ -21,7 +21,7 @@ const router = createBrowserRouter([
     element: <HomeLayout />,
     // If path doesnt exist, use errorElement instead
     errorElement: <Error />,
-    // 
+    //
     children: [
       {
         // This make it the main route
@@ -40,6 +40,28 @@ const router = createBrowserRouter([
       {
         path: "dashboard",
         element: <DashboardLayout />,
+        children: [
+          {
+            index: true,
+            element: <AddJob />,
+          },
+          {
+            path: "stats",
+            element: <Stats />,
+          },
+          {
+            path: "all-jobs",
+            element: <AllJobs />,
+          },
+          {
+            path: "profile",
+            element: <Profile />,
+          },
+          {
+            path: "admin",
+            element: <Admin />,
+          },
+        ],
       },
     ],
   },
