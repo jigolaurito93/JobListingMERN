@@ -1,3 +1,4 @@
+import { log } from "console";
 import * as dotenv from "dotenv";
 dotenv.config();
 import express from "express";
@@ -55,6 +56,7 @@ app.get("/api/v1/jobs/:id", (req, res) => {
   const { id } = req.params;
   const job = jobs.find((job) => job.id === id);
   if (!job) {
+    throw new Error("no job with that id");
     return res.status(404).json({ msg: `No job with id ${id}` });
   }
   res.status(200).json({ job });
@@ -86,6 +88,15 @@ app.delete("/api/v1/jobs/:id", (req, res) => {
   const newJobs = jobs.filter((job) => job.id !== id);
   jobs = newJobs;
   res.status(200).json({ msg: "Job has been deleted", jobs });
+});
+
+app.use("*", (req, res) => {
+  res.status(404).json({ msg: "not found" });
+});
+
+app.use((err, req, res, next) => {
+  console.log(err);
+  res.status(500).json({ msg: "something went wrong" });
 });
 
 const port = process.env.PORT || 5100;
