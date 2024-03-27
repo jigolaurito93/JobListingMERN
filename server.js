@@ -1,4 +1,7 @@
-import { log } from "console";
+// MAKE SURE TO IMPORT THIS AT THE VERY TOP
+// Handles any asynchronous errors and passed it throught the middleware
+import "express-async-errors";
+// 
 import * as dotenv from "dotenv";
 dotenv.config();
 import express from "express";
