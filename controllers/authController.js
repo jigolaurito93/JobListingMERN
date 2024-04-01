@@ -1,6 +1,6 @@
 import { StatusCodes } from "http-status-codes";
 import User from "../models/UserModel.js";
-import bcrypt from "bcryptjs";
+import { hashPassword } from "../utils/passwordUtils.js";
 
 // Register a new user
 export const register = async (req, res) => {
@@ -9,11 +9,9 @@ export const register = async (req, res) => {
   // If it is true, then role is admin, if false, then role is user
   req.body.role = isFirstAccount ? "admin" : "user";
 
-  //   The default value is 10
-  //  The bigger the value, the more secured but the longer its going to take to hash it
-  const salt = await bcrypt.genSalt(10);
-  //   Hash the password that was inputed by user
-  const hashedPassword = await bcrypt.hash(req.body.password, salt);
+  //   Hash the password from the body
+  const hashedPassword = await hashPassword(req.body.password);
+
   //   overwrite the value of the password and use the hashed password
   req.body.password = hashedPassword;
 
