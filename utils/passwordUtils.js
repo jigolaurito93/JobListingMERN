@@ -8,3 +8,9 @@ export const hashPassword = async (password) => {
   const hashedPassword = await bcrypt.hash(password, salt);
   return hashedPassword;
 };
+
+export const comparePassword = async (password, hashedPassword) => {
+  // compare the 2 passwords if they are equal
+  const isMatch = await bcrypt.compare(password, hashedPassword);
+  return isMatch;
+};
