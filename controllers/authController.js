@@ -1,8 +1,10 @@
 import User from "../models/UserModel.js";
+import { StatusCodes } from "http-status-codes";
 
 // Register a new user
 export const register = async (req, res) => {
-  res.send("register");
+  const user = await User.create(req.body);
+  res.status(StatusCodes.CREATED).json({ user });
 };
 
 // Login a user
