@@ -8,7 +8,7 @@ import express from "express";
 const app = express();
 import morgan from "morgan";
 import mongoose from "mongoose";
-import { body, validationResult } from "express-validator";
+import cookieParser from "cookie-parser";
 
 // routers
 import jobRouter from "./routes/jobRouter.js";
@@ -22,6 +22,7 @@ if (process.env.NODE_ENV == "development") {
   app.use(morgan("dev"));
 }
 
+app.use(cookieParser());
 app.use(express.json());
 
 app.use("/api/v1/jobs", authenticateUser, jobRouter);
