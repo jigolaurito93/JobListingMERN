@@ -19,6 +19,12 @@ const JobSchema = new mongoose.Schema(
       type: String,
       default: "my city",
     },
+    createdBy: {
+      // The value is going to be the mongo ID
+      type: mongoose.Types.ObjectId,
+      // As reference, were gonna poing the the user
+      ref: "User",
+    },
   },
   { timestamps: true }
 );
