@@ -1,5 +1,9 @@
 import { body, param, validationResult } from "express-validator";
-import { BadRequestError, NotFoundError } from "../errors/customErrors.js";
+import {
+  BadRequestError,
+  NotFoundError,
+  UnauthorizedError,
+} from "../errors/customErrors.js";
 import { JOB_STATUS, JOB_TYPE } from "../utils/constants.js";
 import mongoose from "mongoose";
 import Job from "../models/JobModel.js";
@@ -14,6 +18,9 @@ const withValidationErrors = (validateValues) => {
         const errorMessages = errors.array().map((error) => error.msg);
         if (errorMessages[0].startsWith("no job")) {
           throw new NotFoundError(errorMessages);
+        }
+        if (errorMessages[0].startsWith("not authorized")) {
+          throw new UnauthorizedError("not authorized to access this route");
         }
         throw new BadRequestError(errorMessages);
       }
@@ -35,12 +42,20 @@ export const validateJobInput = withValidationErrors([
 ]);
 
 export const validateIdParam = withValidationErrors([
-  param("id").custom(async (value) => {
+  param("id").custom(async (value, { req }) => {
     const isValidIdMongoId = mongoose.Types.ObjectId.isValid(value);
     if (!isValidIdMongoId) throw new BadRequestError("invalid MongoDB id");
     const job = await Job.findById(value);
-
     if (!job) throw new NotFoundError(`no job with id ${value}`);
+
+    // Check if the user's role is an admin. this should be a boolean
+    const isAdmin = req.user.role === "admin";
+    // Check if the logged in user has the same userId as the createdBy Id. this should be a boolean
+    const isOwner = req.user.userId === job.createdBy.toString();
+
+    // If user not an admin and user is not the owner of the job throw unauthorized error
+    if (!isAdmin && !isOwner)
+      throw new UnauthorizedError("not authorized to access this route");
   }),
 ]);
 

@@ -3,6 +3,7 @@ import { StatusCodes } from "http-status-codes";
 
 // GET ALL JOBS
 export const getAllJobs = async (req, res) => {
+  // search all jobs that the logged in user has created and access to
   const jobs = await Job.find({ createdBy: req.user.userId });
   res.status(StatusCodes.OK).json({ jobs });
 };
