@@ -31,9 +31,19 @@ export const login = async (req, res) => {
   //   If the input password doesnt match the hashed password, log an error
   if (!isValidUser) throw new UnauthenticatedError("invalid credentials");
 
-  
   //   Authorization Logic
   const token = createJWT({ userId: user._id, role: user.role });
 
-  res.json({ token });
+  // 1000 milliseconds * 60 seconds * 60 mins * 24 hours
+  const oneDay = 1000 * 60 * 60 * 24;
+
+  res.cookie("token", token, {
+    // Cookie can't be accessed in Javascript
+    httpOnly: true,
+    // Date it expires
+    expires: new Date(Date.now() + oneDay),
+    // cookie can only be transmitted over https
+    secure: process.env.NODE_ENV === "production",
+  });
+  res.status(StatusCodes.OK).json({ msg: "user logged in" });
 };
