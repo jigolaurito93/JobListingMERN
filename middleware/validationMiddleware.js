@@ -8,6 +8,7 @@ import { JOB_STATUS, JOB_TYPE } from "../utils/constants.js";
 import mongoose from "mongoose";
 import Job from "../models/JobModel.js";
 import User from "../models/UserModel.js";
+import { request } from "express";
 
 const withValidationErrors = (validateValues) => {
   return [
@@ -101,4 +102,28 @@ export const validateLoginInput = withValidationErrors([
     .withMessage("invalid email format"),
 
   body("password").notEmpty().withMessage("password is required"),
+]);
+
+export const validateUpdateUserInput = withValidationErrors([
+  body("name").notEmpty().withMessage("name is required"),
+  body("email")
+    // make sure email field is not empty
+    .notEmpty()
+    // if it is display this message
+    .withMessage("email is required")
+    // make sure input is a valid email
+    .isEmail()
+    // if not display this message
+    .withMessage("invalid email format")
+    // create a custom validator to check for uniqueness of email
+    .custom(async (email, { req }) => {
+      // Find the email from the User model
+      const user = await User.findOne({ email });
+      // if email already exists from the User model, throw an error
+      if (user && user._id.toString() !== req.user.userId) {
+        throw new BadRequestError("email already exists");
+      }
+    }),
+  body("location").notEmpty().withMessage("location is required"),
+  body("lastName").notEmpty().withMessage("last name is required"),
 ]);
